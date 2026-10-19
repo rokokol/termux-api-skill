@@ -7,6 +7,7 @@
 [![Agent Skill](https://img.shields.io/badge/Agent_Skill-6E56CF?style=flat)](https://agentskills.io)
 ![Termux](https://img.shields.io/badge/Termux-000000?style=flat&logo=android&logoColor=white)
 [![license](https://img.shields.io/badge/MIT-3DA639?style=flat)](LICENSE)
+[![ci](https://github.com/rokokol/termux-api-skill/actions/workflows/build.yml/badge.svg)](https://github.com/rokokol/termux-api-skill/actions/workflows/build.yml)
 
 </div>
 
