@@ -18,7 +18,7 @@ The `termux-*` commands run in Termux on the phone and need the Termux:API app b
 
 ## What Termux cannot do
 
-Termux is an ordinary app, not an adb shell. `dumpsys` is absent, `cmd package query-activities` refuses with a `SecurityException`, and `pm grant` and the Doze whitelist need adb or the Settings screen. `cmd vibrator_manager` accepts a waveform, exits 0 and never vibrates. `am start` from the background prints `Starting:` and does nothing unless Termux holds the special access "Display over other apps" or has a window on the screen. Only the `termux-*` commands reach the hardware, and a command that exits 0 has not thereby done anything: confirm the effect, not the status
+Termux is an ordinary app, not an adb shell, and its `PATH` holds only `$PREFIX/bin`. `/system/bin/dumpsys` answers `Permission Denial` for want of `android.permission.DUMP`, `pm grant` and `cmd package query-activities` refuse with a `SecurityException`, so a permission or the Doze whitelist needs adb or the Settings screen. `cmd vibrator_manager` accepts a waveform, exits 0 and never vibrates. `am start` from the background prints `Starting:` and does nothing unless Termux holds the special access "Display over other apps" or has a window on the screen. Only the `termux-*` commands reach the hardware, and a command that exits 0 has not thereby done anything: confirm the effect, not the status
 
 ## Recipes
 
