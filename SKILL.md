@@ -1,6 +1,6 @@
 ---
 name: termux-api
-description: "Use an Android phone's own hardware and data from its Termux shell through the termux-api commands: both cameras, location, battery, call log and SMS, clipboard, notifications and toasts, vibration and the torch. Use when a request needs the phone itself rather than an explanation: take a photo, find where the phone is, read its battery, look at missed calls or messages, show something on its screen, and when a termux-api command hangs, does nothing or comes back empty. Triggers: take a photo with the phone, selfie, where is my phone, phone battery, missed calls, read my sms, send to the phone clipboard, show it on the phone, vibrate the phone, turn on the torch, termux command hangs, сфоткай с телефона, сделай селфи, где мой телефон, сколько заряда на телефоне, кто мне звонил, прочитай смс, кинь на телефон, покажи на телефоне, вибрани телефоном, включи фонарик, termux-api висит, команда termux ничего не делает"
+description: "Use an Android phone's hardware and data from its Termux shell through the termux-api commands: cameras, location, battery, call log and SMS, clipboard, notifications, vibration, torch. Use when a request needs the phone itself rather than an explanation, and when a termux-api command hangs, does nothing or comes back empty. Triggers: take a photo with the phone, where is my phone, phone battery, missed calls, read my sms, termux command hangs, сфоткай с телефона, сделай селфи, где мой телефон, сколько заряда на телефоне, кто мне звонил, прочитай смс, кинь на телефон, покажи на телефоне, включи фонарик, termux-api висит"
 license: MIT
 ---
 
@@ -18,15 +18,14 @@ The `termux-*` commands run in Termux on the phone and need the Termux:API app b
 
 ## What Termux cannot do
 
-Termux is an ordinary app, not an adb shell. `dumpsys` is absent, `cmd package query-activities` refuses with a `SecurityException`, and `pm grant` and the Doze whitelist need adb or the Settings screen. `cmd vibrator_manager` accepts a waveform, exits 0 and never vibrates. `am start` from an ssh session opens no screen: an intent aimed at an activity that is not exported fails with a `SecurityException`, and an implicit one such as `SET_ALARM -p PACKAGE` prints `Starting:` and does nothing, so termux-api has no way to set an alarm. Only the `termux-*` commands reach the hardware, and a command that exits 0 has not thereby done anything: confirm the effect, not the status
+Termux is an ordinary app, not an adb shell. `dumpsys` is absent, `cmd package query-activities` refuses with a `SecurityException`, and `pm grant` and the Doze whitelist need adb or the Settings screen. `cmd vibrator_manager` accepts a waveform, exits 0 and never vibrates. `am start` from the background prints `Starting:` and does nothing unless Termux holds the special access "Display over other apps" or has a window on the screen. Only the `termux-*` commands reach the hardware, and a command that exits 0 has not thereby done anything: confirm the effect, not the status
 
 ## Recipes
 
 - **A photo**: `termux-camera-photo -c ID FILE`, where the IDs and their `facing` come from `termux-camera-info`; it takes about three seconds and writes a JPEG of a few megabytes. Fetch it with `ssh PHONE cat FILE > local.jpg` and delete it on the phone afterwards, since it shows wherever the owner is
 - **Where the phone is**: `termux-location -p network -r once` answers in a second or two indoors; `-p gps -r last` returns the last fix without waiting for a new one; `-p gps -r once` waits for a new fix, so it gets a `timeout`
 - **State**: `termux-battery-status`, `termux-wifi-connectioninfo` and `termux-telephony-deviceinfo` print one JSON object each
-- **The clipboard is out of reach from an ssh session**: `termux-clipboard-set TEXT` exits 0 and the text never reaches the phone's clipboard, and `termux-clipboard-get` comes back empty with exit 0
-- **On the screen**: `termux-toast TEXT` for a passing line, `termux-notification` for one that stays; a notification with the same `-i ID` replaces the old one
+- **The clipboard is write-only**: `termux-clipboard-set TEXT` puts text on the phone, but `termux-clipboard-get` comes back empty with exit 0, because Android lets only the app in focus read the clipboard- **On the screen**: `termux-toast TEXT` for a passing line, `termux-notification` for one that stays; a notification with the same `-i ID` replaces the old one
 - **Vibration**: `termux-vibrate -d MS -f` vibrates through silent mode. It returns about 1.5 s after the call whatever the duration and the vibration plays on, and a new vibration cuts short one still playing; a pattern is separate calls started in the background on a schedule, with nothing else in between
 
 ## Notifications
