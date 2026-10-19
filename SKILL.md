@@ -10,7 +10,7 @@ The `termux-*` commands run in Termux on the phone and need the Termux:API app b
 
 ## Every call
 
-- **Wrap it in `timeout`.** A command whose access was never granted can hang with no error: `termux-notification-list` without notification access, which is a special access in the Settings screen rather than a permission dialog, blocks until it is killed. Stop a hung call by the PID of its `termux-api` process
+- **Wrap it in `timeout`.** A command whose access is missing can hang with no error: `termux-notification-list` reads a listener that Android connects only while Termux:API has the notification access, a special access in the Settings screen rather than a permission dialog, and without it the call blocks until it is killed. Stop a hung call by the PID of its `termux-api` process
 - **Expect one to two seconds per call, and one call at a time.** The app serves calls in turn, so two calls meant to happen together are a second apart, and a call that overlaps a timed one delays it
 - **Pass text as an argument.** `termux-toast`, `termux-notification` without `-c` and `termux-clipboard-set` read their text from stdin when the arguments carry none, and then take whatever the caller's stdin holds
 - **Over ssh, quote every argument for the phone's shell**: ssh joins its arguments into one line that the remote shell splits again, so `ssh PHONE "termux-toast $(printf '%q ' 'two words')"`, never `ssh PHONE termux-toast 'two words'`
